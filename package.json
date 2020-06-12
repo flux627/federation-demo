@@ -3,6 +3,7 @@
   "main": "gateway.js",
   "scripts": {
     "start-gateway": "nodemon gateway.js",
+    "start-fastify-gateway": "nodemon fastify-gateway.js",
     "start-service-accounts": "nodemon services/accounts/index.js",
     "start-service-reviews": "nodemon services/reviews/index.js",
     "start-service-products": "nodemon services/products/index.js",
@@ -18,6 +19,8 @@
   "dependencies": {
     "@apollo/gateway": "latest",
     "apollo-server": "latest",
+    "fastify": "^2.14.1",
+    "fastify-gql": "^4.0.0",
     "graphql": "latest"
   }
 }
