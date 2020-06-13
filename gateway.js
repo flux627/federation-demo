@@ -15,7 +15,7 @@ const gateway = new ApolloGateway({
   ],
 
   // Experimental: Enabling this enables the query plan view in Playground.
-  __exposeQueryPlanExperimental: false,
+  __exposeQueryPlanExperimental: true,
 });
 
 (async () => {
