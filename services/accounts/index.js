@@ -1,12 +1,13 @@
-const { ApolloServer, gql } = require("apollo-server");
-const { buildFederatedSchema } = require("@apollo/federation");
+const { ApolloServer, gql, makeExecutableSchema } = require("apollo-server")
 
 const typeDefs = gql`
-  extend type Query {
+  type Query { # extend
     me: User
+
+    _userById(id: ID!): User
   }
 
-  type User @key(fields: "id") {
+  type User { # @key(fields: "id")
     id: ID!
     name: String
     username: String
@@ -16,28 +17,26 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     me() {
-      return users[0];
+      return users[0]
+    },
+
+    _userById(_, { id }) {
+      console.log("Fetching User from Accounts service!", { id })
+      return users.find(user => user.id === id)
     }
   },
-  User: {
-    __resolveReference(object) {
-      return users.find(user => user.id === object.id);
-    }
-  }
-};
+}
 
 const server = new ApolloServer({
-  schema: buildFederatedSchema([
-    {
-      typeDefs,
-      resolvers
-    }
-  ])
-});
+  schema: makeExecutableSchema({
+    typeDefs,
+    resolvers
+  })
+})
 
-server.listen({ port: 4001 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+server.listen({ port: 5001 }).then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`)
+})
 
 const users = [
   {
@@ -52,4 +51,4 @@ const users = [
     birthDate: "1912-06-23",
     username: "@complete"
   }
-];
+]

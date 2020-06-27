@@ -1,44 +1,42 @@
-const { ApolloServer, gql } = require("apollo-server");
-const { buildFederatedSchema } = require("@apollo/federation");
+const { ApolloServer, gql, makeExecutableSchema } = require("apollo-server")
 
 const typeDefs = gql`
-  extend type Query {
+  type Query { # extend
     topProducts(first: Int = 5): [Product]
+
+    _productByUpc(upc: String!): Product
   }
 
-  type Product @key(fields: "upc") {
+  type Product { # @key(fields: "upc")
     upc: String!
     name: String
     price: Int
     weight: Int
   }
-`;
+`
 
 const resolvers = {
-  Product: {
-    __resolveReference(object) {
-      return products.find(product => product.upc === object.upc);
-    }
-  },
   Query: {
     topProducts(_, args) {
-      return products.slice(0, args.first);
+      return products.slice(0, args.first)
+    },
+    _productByUpc: (_, { upc }) => {
+      console.log('Fetching products from Products service!', { upc })
+      return products.find(product => product.upc === upc)
     }
   }
-};
+}
 
 const server = new ApolloServer({
-  schema: buildFederatedSchema([
-    {
-      typeDefs,
-      resolvers
-    }
-  ])
-});
+  schema: makeExecutableSchema({
+    typeDefs,
+    resolvers
+  })
+})
 
-server.listen({ port: 4003 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+server.listen({ port: 5003 }).then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`)
+})
 
 const products = [
   {
@@ -59,4 +57,4 @@ const products = [
     price: 54,
     weight: 50
   }
-];
+]

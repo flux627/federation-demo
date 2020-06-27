@@ -1,48 +1,53 @@
-const { ApolloServer, gql } = require("apollo-server");
-const { buildFederatedSchema } = require("@apollo/federation");
+const { ApolloServer, gql, makeExecutableSchema } = require("apollo-server")
 
 const typeDefs = gql`
-  extend type Product @key(fields: "upc") {
-    upc: String! @external
-    weight: Int @external
-    price: Int @external
+  type Product { # @key(fields: "upc") # extend
+    upc: String! # @external
     inStock: Boolean
-    shippingEstimate: Int @requires(fields: "price weight")
+    shippingEstimate: Int # @requires(fields: "price weight")
   }
-`;
+
+  type Query {
+    _productByUpc(
+      upc: String!,
+      weight: Int,
+      price: Int
+    ): Product
+  }
+`
 
 const resolvers = {
   Product: {
-    __resolveReference(object) {
-      return {
-        ...object,
-        ...inventory.find(product => product.upc === object.upc)
-      };
-    },
-    shippingEstimate(object) {
-      // free for expensive items
-      if (object.price > 1000) return 0;
-      // estimate is based on weight
-      return object.weight * 0.5;
+    shippingEstimate(product) {
+      if (product.price > 1000) return 0 // free for expensive items
+      return Math.round(product.weight * 0.5) || null // estimate is based on weight
+    }
+  },
+  Query: {
+    _productByUpc(_, { upc, ...fields }) {
+      console.log('Fetching product from Inventory service!', { upc, ...fields })
+      const product = {
+        ...inventory.find(product => product.upc === upc),
+        ...fields
+      }
+      return product
     }
   }
-};
+}
 
 const server = new ApolloServer({
-  schema: buildFederatedSchema([
-    {
-      typeDefs,
-      resolvers
-    }
-  ])
-});
+  schema: makeExecutableSchema({
+    typeDefs,
+    resolvers
+  })
+})
 
-server.listen({ port: 4004 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
-});
+server.listen({ port: 5004 }).then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`)
+})
 
 const inventory = [
   { upc: "1", inStock: true },
   { upc: "2", inStock: false },
   { upc: "3", inStock: true }
-];
+]
