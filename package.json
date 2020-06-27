@@ -19,6 +19,7 @@
     "@apollo/gateway": "latest",
     "apollo-link-http": "^1.5.17",
     "apollo-server": "latest",
+    "graphql": "^15.1.0",
     "graphql-tools": "^6.0.11"
   }
 }
