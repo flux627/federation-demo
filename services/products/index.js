@@ -18,10 +18,11 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     topProducts(_, args) {
+      console.log('Fetching top products from Products service!', args)
       return products.slice(0, args.first)
     },
     _productByUpc: (_, { upc }) => {
-      console.log('Fetching products from Products service!', { upc })
+      console.log('Fetching product from Products service!', { upc })
       return products.find(product => product.upc === upc)
     }
   }
