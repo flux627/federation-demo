@@ -68,8 +68,8 @@ const createRemoteSchema = async (uri) => {
           },
           Product: {
             fieldName: "_productByUpc",
-            selectionSet: "{ upc weight price }",
-            args: ({ upc, weight, price }) => ({ upc, weight, price })
+            selectionSet: "{ upc }",
+            args: ({ upc }) => ({ upc })
           },
           Review: {
             fieldName: "_userById",
