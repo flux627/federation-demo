@@ -1,0 +1,29 @@
+type User {
+  id: ID!
+  name: String
+  username: String
+  numberOfReviews: Int
+  reviews: [Review]
+}
+
+type Product {
+  upc: String!
+  name: String
+  price: Int
+  weight: Int
+  inStock: Boolean
+  shippingEstimate: Int
+  reviews: [Review]
+}
+
+type Review {
+  id: ID!
+  body: String
+  author: User
+  product: Product
+}
+
+type Query {
+  me: User
+  topProducts(first: Int = 5): [Product]
+}

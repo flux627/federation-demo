@@ -8,7 +8,12 @@ const {
   linkToExecutor,
   introspectSchema,
   stitchSchemas,
+  loadSchema,
+  GraphQLFileLoader,
+  wrapSchema,
+  FilterRootFields
 } = require("graphql-tools")
+const { validateSchemaCoverage } = require("./validateSchemaCoverage")
 
 const createRemoteSchema = async (uri) => {
   const link = new HttpLink({ uri, fetch })
@@ -21,6 +26,11 @@ const createRemoteSchema = async (uri) => {
 };
 
 (async () => {
+  const targetSchema = await loadSchema(
+    'targetSchema.graphql',
+    { loaders: [new GraphQLFileLoader()] },
+  )
+
   const accountsSchema = await createRemoteSchema("http://localhost:5001/graphql")
   const inventorySchema = await createRemoteSchema("http://localhost:5004/graphql")
   const productsSchema = await createRemoteSchema("http://localhost:5003/graphql")
@@ -80,6 +90,15 @@ const createRemoteSchema = async (uri) => {
       }],
     mergeTypes: true,
   })
+
+  const filteredStitchedSchema = wrapSchema(
+    stitchedSchema,
+    [new FilterRootFields((_, fieldName) => !fieldName.startsWith('_'))]
+  )
+
+  if (!validateSchemaCoverage(targetSchema, filteredStitchedSchema)) {
+    process.exit(1)
+  }
 
   const server = new ApolloServer({
     schema: stitchedSchema,
