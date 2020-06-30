@@ -1,17 +1,16 @@
 const { ApolloServer, gql, makeExecutableSchema } = require("apollo-server")
 
 const typeDefs = gql`
-  type Query { # extend
-    topProducts(first: Int = 5): [Product]
-
-    _productByUpc(upc: String!): Product
-  }
-
-  type Product { # @key(fields: "upc")
+  type Product {
     upc: String!
     name: String
     price: Int
     weight: Int
+  }
+
+  type Query {
+    topProducts(first: Int = 5): [Product]
+    _productByUpc(upc: String!): Product
   }
 `
 

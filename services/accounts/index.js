@@ -1,16 +1,15 @@
 const { ApolloServer, gql, makeExecutableSchema } = require("apollo-server")
 
 const typeDefs = gql`
-  type Query { # extend
-    me: User
-
-    _userById(id: ID!): User
-  }
-
-  type User { # @key(fields: "id")
+  type User {
     id: ID!
     name: String
     username: String
+  }
+
+  type Query {
+    me: User
+    _userById(id: ID!): User
   }
 `;
 

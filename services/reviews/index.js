@@ -1,22 +1,22 @@
 const { ApolloServer, gql, makeExecutableSchema } = require("apollo-server")
 
 const typeDefs = gql`
-  type Review { # @key(fields: "id")
+  type Review {
     id: ID!
     body: String
-    author: User # @provides(fields: "username")
+    author: User
     product: Product
   }
 
-  type User { # @extend @key(fields: "id")
-    id: ID! # @external
-    username: String # @external
+  type User {
+    id: ID!
+    username: String
     numberOfReviews: Int
     reviews: [Review]
   }
 
-  type Product { #  @extend @key(fields: "upc")
-    upc: String! # @external
+  type Product {
+    upc: String!
     reviews: [Review]
   }
 
