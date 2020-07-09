@@ -8,12 +8,13 @@ const {
   linkToExecutor,
   introspectSchema,
   stitchSchemas,
-  loadSchema,
-  GraphQLFileLoader,
-  wrapSchema,
-  FilterRootFields
+  // loadSchema,
+  // GraphQLFileLoader,
+  // wrapSchema,
+  // FilterRootFields
 } = require("graphql-tools")
-const { validateSchemaCoverage } = require("./validateSchemaCoverage")
+// const { validateSchemaCoverage } = require("./validateSchemaCoverage")
+const { validateUniqueOperationFields } = require("./validateUniqueOperationFields")
 
 const createRemoteSchema = async (uri) => {
   const link = new HttpLink({ uri, fetch })
@@ -26,79 +27,128 @@ const createRemoteSchema = async (uri) => {
 };
 
 (async () => {
-  const targetSchema = await loadSchema(
-    'targetSchema.graphql',
-    { loaders: [new GraphQLFileLoader()] },
-  )
+  // const targetSchema = await loadSchema(
+  //   'targetSchema.graphql',
+  //   { loaders: [new GraphQLFileLoader()] },
+  // )
 
-  const accountsSchema = await createRemoteSchema("http://localhost:5001/graphql")
-  const inventorySchema = await createRemoteSchema("http://localhost:5004/graphql")
-  const productsSchema = await createRemoteSchema("http://localhost:5003/graphql")
-  const reviewsSchema = await createRemoteSchema("http://localhost:5002/graphql")
+  const subschemas = {
+    accounts: await createRemoteSchema("http://localhost:5001/graphql"),
+    inventory: await createRemoteSchema("http://localhost:5004/graphql"),
+    products: await createRemoteSchema("http://localhost:5003/graphql"),
+    reviews: await createRemoteSchema("http://localhost:5002/graphql"),
+  }
+
+  if (!validateUniqueOperationFields(subschemas)) {
+    process.exit(1)
+  }
 
   const stitchedSchema = stitchSchemas({
     subschemas: [
       {
-        schema: accountsSchema,
+        schema: subschemas.accounts,
         merge: {
+          // User: {
+          //   fieldName: "_userById",
+          //   selectionSet: "{ id }",
+          //   args: ({ id }) => ({ id })
+          // },
           User: {
-            fieldName: "_userById",
+            fieldName: "_usersByIds",
             selectionSet: "{ id }",
-            args: ({ id }) => ({ id })
+            resolveMany: true,
+            key: ({ id }) => id,
+            args: (ids) => ({ ids })
           }
         }
       },
       {
-        schema: inventorySchema,
+        schema: subschemas.inventory,
         merge: {
+          // Product: {
+          //   fieldName: "_productByUpc",
+          //   selectionSet: "{ upc weight price }",
+          //   args: ({ upc, weight, price }) => ({ upc, weight, price })
+          // },
           Product: {
-            fieldName: "_productByUpc",
+            fieldName: "_productsByUpcs",
             selectionSet: "{ upc weight price }",
-            args: ({ upc, weight, price }) => ({ upc, weight, price })
-          }
+            resolveMany: true,
+            key: ({ upc, weight, price }) => ({ upc, weight, price }),
+            args: (fieldSets) => ({ fieldSets })
+          },
         }
       },
       {
-        schema: productsSchema,
+        schema: subschemas.products,
         merge: {
+          // Product: {
+          //   fieldName: "_productByUpc",
+          //   selectionSet: "{ upc }",
+          //   args: ({ upc }) => ({ upc })
+          // },
           Product: {
-            fieldName: "_productByUpc",
+            fieldName: "_productsByUpcs",
             selectionSet: "{ upc }",
-            args: ({ upc }) => ({ upc })
-          }
+            resolveMany: true,
+            key: ({ upc }) => upc,
+            args: (upcs) => ({ upcs })
+          },
         }
       },
       {
-        schema: reviewsSchema,
+        schema: subschemas.reviews,
         merge: {
+          // User: {
+          //   fieldName: "_userById",
+          //   selectionSet: "{ id }",
+          //   args: ({ id }) => ({ id })
+          // },
+          // Product: {
+          //   fieldName: "_productByUpc",
+          //   selectionSet: "{ upc }",
+          //   args: ({ upc }) => ({ upc })
+          // },
+          // Review: {
+          //   fieldName: "_userById",
+          //   selectionSet: "{ id }",
+          //   args: ({ id }) => ({ id })
+          // },
+
           User: {
-            fieldName: "_userById",
+            fieldName: "_usersByIds",
             selectionSet: "{ id }",
-            args: ({ id }) => ({ id })
+            resolveMany: true,
+            key: ({ id }) => id,
+            args: (ids) => ({ ids })
           },
           Product: {
-            fieldName: "_productByUpc",
+            fieldName: "_productsByUpcs",
             selectionSet: "{ upc }",
-            args: ({ upc }) => ({ upc })
+            resolveMany: true,
+            key: ({ upc }) => upc,
+            args: (upcs) => ({ upcs })
           },
           Review: {
-            fieldName: "_userById",
+            fieldName: "_usersByIds",
             selectionSet: "{ id }",
-            args: ({ id }) => ({ id })
-          }
+            resolveMany: true,
+            key: ({ id }) => id,
+            args: (ids) => ({ ids })
+          },
         }
       }],
     mergeTypes: true,
   })
 
-  const filteredStitchedSchema = wrapSchema(
-    stitchedSchema,
-    [new FilterRootFields((_, fieldName) => !fieldName.startsWith('_'))]
-  )
+  // const filteredStitchedSchema = wrapSchema(
+  //   stitchedSchema,
+  //   [new FilterRootFields((_, fieldName) => !fieldName.startsWith('_'))]
+  // )
 
-  if (!validateSchemaCoverage(targetSchema, filteredStitchedSchema)) {
-    process.exit(1)
-  }
+  // if (!validateSchemaCoverage(targetSchema, filteredStitchedSchema)) {
+  //   process.exit(1)
+  // }
 
   const server = new ApolloServer({
     schema: stitchedSchema,

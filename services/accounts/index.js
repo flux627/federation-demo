@@ -10,6 +10,7 @@ const typeDefs = gql`
   type Query {
     me: User
     _userById(id: ID!): User
+    _usersByIds(ids: [ID!]!): [User]
   }
 `;
 
@@ -23,6 +24,11 @@ const resolvers = {
     _userById(_, { id }) {
       console.log("Fetching User from Accounts service!", { id })
       return users.find(user => user.id === id)
+    },
+
+    _usersByIds(_, { ids }) {
+      console.log("Fetching Users from Accounts service!", ids)
+      return ids.map(id => users.find(user => user.id === id))
     }
   },
 }

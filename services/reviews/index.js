@@ -24,6 +24,10 @@ const typeDefs = gql`
     _userById(id: ID!): User
     _reviewById(id: ID!): Review
     _productByUpc(upc: String!): Product
+
+    _usersByIds(ids: [ID!]!): [User]
+    _reviewsByIds(ids: [ID!]!): [Review]
+    _productsByUpcs(upcs: [String!]!): [Product]
   }
 `
 
@@ -55,13 +59,36 @@ const resolvers = {
       console.log('Fetching Review from Reviews service!', { id })
       return reviews.find(review => review.id === id)
     },
+
     _userById: (_, { id }) => {
       console.log('Fetching User from Reviews service!', { id })
       return { id }
     },
+
     _productByUpc: (_, { upc }) => {
       console.log('Fetching Product from Reviews service!', { upc })
       return { upc }
+    },
+
+    _reviewsByIds: (_, { ids }) => {
+      console.log('Fetching Reviews from Reviews service!', ids)
+      return ids.map(id => {
+        return reviews.find(review => review.id === id)
+      })
+    },
+
+    _usersByIds: (_, { ids }) => {
+      console.log('Fetching Users from Reviews service!', ids)
+      return ids.map(id => {
+        return { id }
+      })
+    },
+
+    _productsByUpcs: (_, { upcs }) => {
+      console.log('Fetching Products from Reviews service!', upcs)
+      return upcs.map(upc => {
+        return { upc }
+      })
     },
   }
 }

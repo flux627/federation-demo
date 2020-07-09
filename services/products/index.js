@@ -11,6 +11,7 @@ const typeDefs = gql`
   type Query {
     topProducts(first: Int = 5): [Product]
     _productByUpc(upc: String!): Product
+    _productsByUpcs(upcs: [String!]!): [Product]
   }
 `
 
@@ -20,9 +21,17 @@ const resolvers = {
       console.log('Fetching top products from Products service!', args)
       return products.slice(0, args.first)
     },
+
     _productByUpc: (_, { upc }) => {
       console.log('Fetching product from Products service!', { upc })
       return products.find(product => product.upc === upc)
+    },
+
+    _productsByUpcs: (_, { upcs }) => {
+      console.log('Fetching products from Products service!', upcs)
+      return upcs.map(upc => {
+        return products.find(product => product.upc === upc)
+      })
     }
   }
 }
