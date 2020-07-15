@@ -17,6 +17,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     topProducts(_, args) {
+      console.log("-----------------------------------------")
       console.log('Fetching top products from Products service!', args)
       return products.slice(0, args.first)
     },

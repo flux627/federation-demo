@@ -16,6 +16,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     me() {
+      console.log("-----------------------------------------")
       console.log("Fetching User (me) from Accounts service!")
       return users[0]
     },
