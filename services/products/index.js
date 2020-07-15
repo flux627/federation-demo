@@ -18,12 +18,12 @@ const resolvers = {
   Query: {
     topProducts(_, args) {
       console.log('-----------------------------------------')
-      console.log('Fetching top products from Products service!', args)
+      console.log("Fetching top products from Products service via 'topProducts'\n", args)
       return products.slice(0, args.first)
     },
 
     _productsByUpcs: (_, { upcs }) => {
-      console.log('Fetching products from Products service!', upcs)
+      console.log("Fetching products from Products service via '_productsByUpcs':\n   ", upcs)
       return upcs.map(upc => {
         return products.find(product => product.upc === upc)
       })

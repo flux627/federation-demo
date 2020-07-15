@@ -52,21 +52,21 @@ const resolvers = {
   },
   Query: {
     _reviewsByIds: (_, { ids }) => {
-      console.log('Fetching Reviews from Reviews service!', ids)
+      console.log("Fetching Reviews from Reviews service via '_reviewsByIds':\n   ", ids)
       return ids.map(id => {
         return reviews.find(review => review.id === id)
       })
     },
 
     _usersByIds: (_, { ids }) => {
-      console.log('Fetching Users from Reviews service!', ids)
+      console.log("Fetching Users from Reviews service via '_usersByIds':\n   ", ids)
       return ids.map(id => {
         return { id }
       })
     },
 
     _productsByUpcs: (_, { upcs }) => {
-      console.log('Fetching Products from Reviews service!', upcs)
+      console.log("Fetching Products from Reviews service via '_productsByUpcs':\n   ", upcs)
       return upcs.map(upc => {
         return { upc }
       })

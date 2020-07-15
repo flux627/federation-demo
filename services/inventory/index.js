@@ -29,7 +29,7 @@ const resolvers = {
   },
   Query: {
     _productsByUpcs(_, { fieldSets }) {
-      console.log('Fetching Products from Inventory service!', fieldSets)
+      console.log("Fetching Products from Inventory service via '_productsByUpcs':\n   ", fieldSets)
       return fieldSets.map(fieldSet => {
         return {
           ...fieldSet,

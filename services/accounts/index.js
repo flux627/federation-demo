@@ -17,12 +17,12 @@ const resolvers = {
   Query: {
     me() {
       console.log('-----------------------------------------')
-      console.log("Fetching User (me) from Accounts service!")
+      console.log("Fetching User (me) from Accounts service via 'me'\n")
       return users[0]
     },
 
     _usersByIds(_, { ids }) {
-      console.log("Fetching Users from Accounts service!", ids)
+      console.log("Fetching Users from Accounts service via '_usersByIds':\n   ", ids)
       return ids.map(id => users.find(user => user.id === id))
     }
   },
