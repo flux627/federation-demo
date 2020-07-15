@@ -18,11 +18,11 @@ const resolvers = {
   Query: {
     topProducts(_, args) {
       console.log("-----------------------------------------")
-      console.log('Fetching top products from Products service!', args)
+      console.log("Fetching top products from Products service via 'topProducts':\n   ", args)
       return products.slice(0, args.first)
     },
     _productByUpc: (_, { upc }) => {
-      console.log('Fetching product from Products service!', { upc })
+      console.log("Fetching product from Products service via '_productByUpc':\n   ", { upc })
       return products.find(product => product.upc === upc)
     }
   }

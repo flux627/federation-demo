@@ -52,15 +52,15 @@ const resolvers = {
   },
   Query: {
     _reviewById: (_, { id }) => {
-      console.log('Fetching Review from Reviews service!', { id })
+      console.log("Fetching Review from Reviews service via '_reviewById':\n   ", { id })
       return reviews.find(review => review.id === id)
     },
     _userById: (_, { id }) => {
-      console.log('Fetching User from Reviews service!', { id })
+      console.log("Fetching User from Reviews service via '_userById':\n   ", { id })
       return { id }
     },
     _productByUpc: (_, { upc }) => {
-      console.log('Fetching Product from Reviews service!', { upc })
+      console.log("Fetching Product from Reviews service via '_productByUpc':\n   ", { upc })
       return { upc }
     },
   }

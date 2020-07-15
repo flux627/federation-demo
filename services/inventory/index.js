@@ -25,7 +25,7 @@ const resolvers = {
   },
   Query: {
     _productByUpc(_, { upc, ...fields }) {
-      console.log('Fetching Product from Inventory service!', { upc, ...fields })
+      console.log("Fetching Product from Inventory service via '_productByUpc':\n   ", { upc, ...fields })
       const product = {
         ...inventory.find(product => product.upc === upc),
         ...fields
