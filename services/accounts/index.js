@@ -9,7 +9,6 @@ const typeDefs = gql`
 
   type Query {
     me: User
-    _userById(id: ID!): User
     _usersByIds(ids: [ID!]!): [User]
   }
 `;
@@ -17,13 +16,9 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     me() {
+      console.log('-----------------------------------------')
       console.log("Fetching User (me) from Accounts service!")
       return users[0]
-    },
-
-    _userById(_, { id }) {
-      console.log("Fetching User from Accounts service!", { id })
-      return users.find(user => user.id === id)
     },
 
     _usersByIds(_, { ids }) {

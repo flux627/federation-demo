@@ -14,12 +14,6 @@ const typeDefs = gql`
   }
 
   type Query {
-    _productByUpc(
-      upc: String!,
-      weight: Int,
-      price: Int
-    ): Product
-
     _productsByUpcs(
       fieldSets: [FieldSet!]!
     ): [Product!]!
@@ -34,14 +28,6 @@ const resolvers = {
     }
   },
   Query: {
-    _productByUpc(_, { upc, ...fields }) {
-      console.log('Fetching Product from Inventory service!', { upc, ...fields })
-      return {
-        ...fields,
-        ...inventory.find(product => product.upc === upc),
-      }
-    },
-
     _productsByUpcs(_, { fieldSets }) {
       console.log('Fetching Products from Inventory service!', fieldSets)
       return fieldSets.map(fieldSet => {

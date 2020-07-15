@@ -48,11 +48,6 @@ const createRemoteSchema = async (uri) => {
       {
         schema: subschemas.accounts,
         merge: {
-          // User: {
-          //   fieldName: "_userById",
-          //   selectionSet: "{ id }",
-          //   args: ({ id }) => ({ id })
-          // },
           User: {
             fieldName: "_usersByIds",
             selectionSet: "{ id }",
@@ -65,11 +60,6 @@ const createRemoteSchema = async (uri) => {
       {
         schema: subschemas.inventory,
         merge: {
-          // Product: {
-          //   fieldName: "_productByUpc",
-          //   selectionSet: "{ upc weight price }",
-          //   args: ({ upc, weight, price }) => ({ upc, weight, price })
-          // },
           Product: {
             fieldName: "_productsByUpcs",
             selectionSet: "{ upc weight price }",
@@ -82,11 +72,6 @@ const createRemoteSchema = async (uri) => {
       {
         schema: subschemas.products,
         merge: {
-          // Product: {
-          //   fieldName: "_productByUpc",
-          //   selectionSet: "{ upc }",
-          //   args: ({ upc }) => ({ upc })
-          // },
           Product: {
             fieldName: "_productsByUpcs",
             selectionSet: "{ upc }",
@@ -99,22 +84,6 @@ const createRemoteSchema = async (uri) => {
       {
         schema: subschemas.reviews,
         merge: {
-          // User: {
-          //   fieldName: "_userById",
-          //   selectionSet: "{ id }",
-          //   args: ({ id }) => ({ id })
-          // },
-          // Product: {
-          //   fieldName: "_productByUpc",
-          //   selectionSet: "{ upc }",
-          //   args: ({ upc }) => ({ upc })
-          // },
-          // Review: {
-          //   fieldName: "_userById",
-          //   selectionSet: "{ id }",
-          //   args: ({ id }) => ({ id })
-          // },
-
           User: {
             fieldName: "_usersByIds",
             selectionSet: "{ id }",
